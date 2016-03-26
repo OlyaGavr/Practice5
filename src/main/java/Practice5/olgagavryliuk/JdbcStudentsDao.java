@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.googlecode.ehcache.annotations.Cacheable;
+
 @Repository
 public class JdbcStudentsDao implements StudentsDao {
 	private static final String SQL_INSERT_STUDENT = "insert into students (pib,course) values (?,?)";
@@ -21,6 +23,7 @@ public class JdbcStudentsDao implements StudentsDao {
 		jdbcTemplate.update(SQL_INSERT_STUDENT, student.getPib(), student.getCourse());
 	}
 
+	@Cacheable(cacheName = "studentsCache")
 	public Student getStudentById(int id) {
 		return jdbcTemplate.queryForObject(SQL_SELECT_STUDENT_BY_ID, new ParameterizedRowMapper<Student>() {
 			public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -31,5 +34,10 @@ public class JdbcStudentsDao implements StudentsDao {
 				return student;
 			}
 		}, id);
+	}
+
+	public Student getStudentById() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
